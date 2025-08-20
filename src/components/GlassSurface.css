@@ -1,0 +1,63 @@
+.glass-surface {
+  position: relative;
+  display: inline-block;
+  overflow: visible;
+}
+
+/* SVG filter container */
+.glass-surface__filter {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  visibility: hidden; /* keep DOM but avoid highlighting */
+}
+
+.glass-surface__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  pointer-events: auto;
+}
+
+/* When we can use SVG filters we show the filter element so feImage can be loaded */
+.glass-surface--svg .glass-surface__filter {
+  visibility: visible;
+}
+
+/* Fallback: soft translucent background with blur */
+/* Use --glass-frost (opacity) set by component so backgroundOpacity works cross-browser */
+.glass-surface--fallback {
+  background: rgba(255,255,255,var(--glass-frost,0.03));
+  backdrop-filter: blur(8px) saturate(var(--glass-saturation, 1));
+  -webkit-backdrop-filter: blur(8px) saturate(var(--glass-saturation, 1));
+  transition: background 0.35s ease, backdrop-filter 0.35s ease, -webkit-backdrop-filter 0.35s ease;
+}
+
+/* Make sure the filter area doesn't capture pointer events */
+.glass-surface__filter,
+.glass-surface__filter * {
+  pointer-events: none;
+}
+
+/* Slight inner highlight */
+.glass-surface__content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  pointer-events: none;
+}
+
+/* Utility to make the glass bigger so the SVG can displace properly */
+.glass-surface {
+  -webkit-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+}
