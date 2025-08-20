@@ -288,7 +288,7 @@ function ShaderBackground({
   mouseInteraction = true,
   density = 1.0,
   glowIntensity = 0.3,
-  saturation = 0.5,
+  saturation = 0.0,
   hueShift = 140.0,
   speed = 0.7,
   disableAnimation = false,
