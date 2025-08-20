@@ -5,6 +5,7 @@ import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 
 
+
 // Timeline data
 const milestones = [
   { year: '2021', title: 'Ingressei no colegio Cotemig', desc: 'Onde iniciei minha jornada como desenvolvedor.' },
@@ -168,7 +169,7 @@ const AboutSection = () => {
           handle="jg_rocha23"
           status="Online"
           contactText="Contact Me"
-          avatarUrl="./public/Eu.png"
+          avatarUrl="/Eu.png"
           showUserInfo={true}
           enableTilt={true}
           enableMobileTilt={false}
