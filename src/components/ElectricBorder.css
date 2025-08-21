@@ -1,0 +1,100 @@
+/* ElectricBorder.css — SUBSTITUA TODO O CONTEÚDO DO ARQUIVO */
+.electric-border {
+  --electric-border-color: #5227FF;
+  --electric-light-color: oklch(from var(--electric-border-color) l c h);
+  --eb-border-width: 2px;
+
+  /* wrapper segue o tamanho do filho (o modal) e permite overflow da borda */
+  display: inline-block;
+  width: auto;
+  box-sizing: content-box;
+
+  position: relative;
+  border-radius: inherit;
+  overflow: visible; /* importante: permite que a borda "vaze" para fora */
+  isolation: isolate;
+}
+
+.eb-svg {
+  position: fixed;
+  left: -10000px;
+  top: -10000px;
+  width: 10px;
+  height: 10px;
+  opacity: 0.001;
+  pointer-events: none;
+}
+
+.eb-content {
+  position: relative;
+  border-radius: inherit;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Camadas que desenham a borda/glow: vamos posicioná-las fora do box do conteúdo
+   usando inset negativo, assim o wrapper é centrado pelo conteúdo e a borda
+   acompanha exatamente o exterior do modal. */
+.eb-layers {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.eb-stroke,
+.eb-glow-1,
+.eb-glow-2,
+.eb-overlay-1,
+.eb-overlay-2,
+.eb-background-glow {
+  position: absolute;
+  /* começamos por zero para o background glow; as camadas individuais recebem inset próprio */
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* stroke: deslocar para fora do conteúdo (assim não "muda" o tamanho do wrapper) */
+.eb-stroke {
+  /* coloca a borda um pouco para fora do conteúdo */
+  inset: calc(var(--eb-border-width) * -1);
+  border: var(--eb-border-width) solid var(--electric-border-color);
+  mix-blend-mode: screen;
+  box-sizing: border-box;
+}
+
+/* glows: mais deslocamento e blur para ficarem externos ao modal */
+.eb-glow-1 {
+  inset: calc(var(--eb-border-width) * -1.4);
+  border: var(--eb-border-width) solid oklch(from var(--electric-border-color) l c h / 0.6);
+  opacity: 0.6;
+  filter: blur(calc(0.5px + (var(--eb-border-width) * 0.25)));
+  box-sizing: border-box;
+}
+
+.eb-glow-2 {
+  inset: calc(var(--eb-border-width) * -2);
+  border: var(--eb-border-width) solid var(--electric-light-color);
+  opacity: 0.55;
+  filter: blur(calc(2px + (var(--eb-border-width) * 0.5)));
+  box-sizing: border-box;
+}
+
+/* fundo difuso mais largo (mantém inset = 0 para cobrir área atrás do wrapper) */
+.eb-background-glow {
+  z-index: -1;
+  transform: scale(1.08);
+  filter: blur(32px);
+  opacity: 0.32;
+  background: linear-gradient(-30deg,
+      var(--electric-light-color),
+      transparent,
+      var(--electric-border-color));
+  box-sizing: border-box;
+}

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import ElectricBorder from './ElectricBorder'; // novo import (coloque ElectricBorder.jsx + ElectricBorder.css na mesma pasta)
 
 const projects = [
   {
@@ -48,21 +49,56 @@ const Section = styled.section`
   overflow-x: hidden;
 `;
 
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 18px 12px;
-  max-width: 900px;
+// ... (o resto dos styled components permanece igual)
+const CarouselWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  max-width: 980px;
   margin: 0 auto;
+  overflow: visible;
+  outline: none;
+`;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
+const CarouselViewport = styled.div`
+  overflow: hidden;
+  width: 100%;
+`;
 
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
+const CarouselTrack = styled(motion.div)`
+  display: flex;
+  gap: 18px;
+  will-change: transform;
+  cursor: grab;
+  &:active { cursor: grabbing; }
+`;
+
+const ArrowBtn = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  background: linear-gradient(135deg, rgba(0,234,255,0.12), rgba(0,122,255,0.06));
+  box-shadow: 0 6px 20px rgba(0,234,255,0.08);
+  color: #00eaff;
+  backdrop-filter: blur(6px);
+  transition: transform 160ms, box-shadow 160ms;
+  &:hover { transform: translateY(-50%) scale(1.05); box-shadow: 0 10px 30px rgba(0,234,255,0.14); }
+`;
+
+const PrevBtn = styled(ArrowBtn)`
+  left: -26px;
+`;
+
+const NextBtn = styled(ArrowBtn)`
+  right: -26px;
 `;
 
 const Card = styled(motion.div)`
@@ -77,6 +113,10 @@ const Card = styled(motion.div)`
   transition: box-shadow 0.2s;
   &:hover {
     box-shadow: 0 8px 32px #00eaff55;
+  }
+  flex: 0 0 calc((100% - 36px) / 3);
+  @media (max-width: 900px) {
+    flex: 0 0 calc(100%);
   }
 `;
 
@@ -131,6 +171,7 @@ const ModalContent = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 `;
 
 const CloseBtn = styled.button`
@@ -157,30 +198,129 @@ const MediaWrapper = styled.div`
 const ProjectsSection = () => {
   const [modal, setModal] = useState(null);
 
+  const total = projects.length;
+  const [itemsPerViewState, setItemsPerViewState] = useState(typeof window !== 'undefined' && window.innerWidth <= 900 ? 1 : 3);
+
+  // infinite slides: clone projects 3x and start in the middle block
+  const slides = React.useMemo(() => [...projects, ...projects, ...projects], []);
+  const startIndex = total;
+  const [index, setIndex] = useState(startIndex);
+  const [isSnap, setIsSnap] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const isDraggingRef = React.useRef(false);
+
+  React.useEffect(() => {
+    const onResize = () => setItemsPerViewState(window.innerWidth <= 900 ? 1 : 3);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  React.useEffect(() => {
+    // when itemsPerView changes, ensure index stays in valid middle range
+    setIndex(startIndex);
+  }, [itemsPerViewState, total, startIndex]);
+
+  const prev = useCallback(() => { setIsSnap(false); setIndex(i => i - 1); }, []);
+  const next = useCallback(() => { setIsSnap(false); setIndex(i => i + 1); }, []);
+
+  const wrapperRef = React.useRef(null);
+  React.useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const onKey = (e) => {
+      if (e.key === 'ArrowLeft') prev();
+      else if (e.key === 'ArrowRight') next();
+      else if (e.key === 'Enter') {
+        const active = document.activeElement;
+        if (active && active.getAttribute && active.getAttribute('aria-label')?.startsWith('Open details')) {
+          active.click();
+        }
+      }
+    };
+    el.addEventListener('keydown', onKey);
+    return () => el.removeEventListener('keydown', onKey);
+  }, [wrapperRef, prev, next]);
+
+  // when index moves into cloned regions, snap back to middle equivalent
+  React.useEffect(() => {
+    // if index is before the first copy or after the last copy
+    if (index < total) {
+      // jumped to left cloned block, snap to middle
+      const target = index + total;
+      setTimeout(() => {
+        setIsSnap(true);
+        setIndex(target);
+      }, 260);
+    } else if (index >= total * 2) {
+      const target = index - total;
+      setTimeout(() => {
+        setIsSnap(true);
+        setIndex(target);
+      }, 260);
+    } else {
+      // normal
+    }
+  }, [index, total]);
+
+  const viewportRef = React.useRef(null);
+
   return (
     <Section id="projects">
       <h2 style={{ fontFamily: 'Fira Code, monospace', fontWeight: 700, fontSize: '2.1rem', letterSpacing: 1 }}>Projects</h2>
-      <Grid>
-        {projects.map((proj, i) => (
-          <Card
-            key={proj.name}
-            whileHover={{ rotateY: 8, y: -8, boxShadow: '0 12px 40px #00eaff88' }}
-            transition={{ type: 'spring', stiffness: 200 }}
-            onClick={() => setModal(i)}
-            tabIndex={0}
-            aria-label={`Open details for ${proj.name}`}
+      <CarouselWrapper ref={wrapperRef} tabIndex={0}>
+        <CarouselViewport ref={viewportRef}>
+          <CarouselTrack
+            drag="x"
+            dragMomentum={false}
+            dragElastic={0.12}
+            onDragStart={() => { isDraggingRef.current = true; setIsDragging(true); setIsSnap(false); }}
+            onDragEnd={(e, info) => {
+              const viewportWidth = viewportRef.current ? viewportRef.current.clientWidth : window.innerWidth;
+              const gap = 18;
+              const slideWidth = (viewportWidth - (itemsPerViewState - 1) * gap) / itemsPerViewState;
+              const velocityFactor = 0.22;
+              const movement = info.offset.x + info.velocity.x * velocityFactor;
+              const absMovement = Math.abs(movement);
+              let slidesToMove = Math.max(1, Math.round(absMovement / Math.max(1, slideWidth)));
+              slidesToMove = Math.min(slidesToMove, total);
+              if (absMovement < slideWidth * 0.15) {
+                setIndex(i => i);
+              } else {
+                const dir = movement < 0 ? 1 : -1;
+                setIndex(i => i + dir * slidesToMove);
+              }
+              setTimeout(() => { isDraggingRef.current = false; setIsDragging(false); }, 50);
+            }}
+            animate={{ x: `-${index * (100 / itemsPerViewState)}%` }}
+            transition={isSnap ? { duration: 0 } : { type: 'spring', stiffness: 300, damping: 28 }}
           >
-            <CardImg src={proj.img} alt={proj.name + ' preview'} />
-            <CardContent>
-              <div style={{ fontWeight: 600, fontSize: '1.15rem' }}>{proj.name}</div>
-              <div style={{ color: '#b2c7d9', fontSize: '0.98rem', marginTop: 2 }}>{proj.desc}</div>
-              <TechList>
-                {proj.tech.map(t => <Tech key={t}>{t}</Tech>)}
-              </TechList>
-            </CardContent>
-          </Card>
-        ))}
-      </Grid>
+            {slides.map((proj, i) => (
+              <Card
+                key={proj.name + '-' + i}
+                whileHover={{ rotateY: 8, y: -8, boxShadow: '0 12px 40px #00eaff88' }}
+                transition={{ type: 'spring', stiffness: 200 }}
+                onClick={(e) => {
+                  if (isDraggingRef.current) { e.preventDefault(); e.stopPropagation(); return; }
+                  setModal(i % total);
+                }}
+                style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+                tabIndex={0}
+                aria-label={`Open details for ${proj.name}`}
+              >
+                <CardImg src={proj.img} alt={proj.name + ' preview'} />
+                <CardContent>
+                  <div style={{ fontWeight: 600, fontSize: '1.15rem' }}>{proj.name}</div>
+                  <div style={{ color: '#b2c7d9', fontSize: '0.98rem', marginTop: 2 }}>{proj.desc}</div>
+                  <TechList>
+                    {proj.tech.map(t => <Tech key={t}>{t}</Tech>)}
+                  </TechList>
+                </CardContent>
+              </Card>
+            ))}
+          </CarouselTrack>
+        </CarouselViewport>
+      </CarouselWrapper>
+
       {modal !== null && (
         <ModalOverlay
           initial={{ opacity: 0 }}
@@ -190,34 +330,44 @@ const ProjectsSection = () => {
           aria-modal="true"
           role="dialog"
         >
-          <ModalContent
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            onClick={e => e.stopPropagation()}
-          >
-            <CloseBtn onClick={() => setModal(null)} aria-label="Close project modal">×</CloseBtn>
-            <div style={{ fontWeight: 700, fontSize: '1.3rem', marginBottom: 8 }}>{projects[modal].name}</div>
-            <TechList style={{ marginBottom: 10 }}>
-              {projects[modal].tech.map(t => <Tech key={t}>{t}</Tech>)}
-            </TechList>
-            <MediaWrapper>
-              {projects[modal].video ? (
-                <video src={projects[modal].video} autoPlay loop muted style={{ borderRadius: 12, marginBottom: 12 }} />
-              ) : (
-                <iframe
-                  src={projects[modal].demo}
-                  title={projects[modal].name + ' demo'}
-                  style={{ height: 220, border: 'none', borderRadius: 12, marginBottom: 12 }}
-                  allow="autoplay; fullscreen"
-                />
-              )}
-            </MediaWrapper>
-            <div style={{ color: '#b2c7d9', fontSize: '1.01rem', marginBottom: 10 }}>{projects[modal].desc}</div>
-            <a href={projects[modal].demo || '#'} target="_blank" rel="noopener noreferrer" style={{ color: '#00eaff', textDecoration: 'underline', fontSize: '1.05rem' }}>
-              {projects[modal].demo ? 'Live Demo' : 'Project Link'}
-            </a>
-          </ModalContent>
+          {/* Aqui envolvemos o ModalContent com ElectricBorder */}
+          <ElectricBorder
+  color="#7df9ff"
+  speed={1}
+  chaos={0.5}
+  thickness={2}
+  style={{ borderRadius: 18 }} // apenas radius; o ModalContent controla largura
+>
+
+            <ModalContent
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+            >
+              <CloseBtn onClick={() => setModal(null)} aria-label="Close project modal">×</CloseBtn>
+              <div style={{ fontWeight: 700, fontSize: '1.3rem', marginBottom: 8 }}>{projects[modal].name}</div>
+              <TechList style={{ marginBottom: 10 }}>
+                {projects[modal].tech.map(t => <Tech key={t}>{t}</Tech>)}
+              </TechList>
+              <MediaWrapper>
+                {projects[modal].video ? (
+                  <video src={projects[modal].video} autoPlay loop muted style={{ borderRadius: 12, marginBottom: 12 }} />
+                ) : (
+                  <iframe
+                    src={projects[modal].demo}
+                    title={projects[modal].name + ' demo'}
+                    style={{ height: 220, border: 'none', borderRadius: 12, marginBottom: 12 }}
+                    allow="autoplay; fullscreen"
+                  />
+                )}
+              </MediaWrapper>
+              <div style={{ color: '#b2c7d9', fontSize: '1.01rem', marginBottom: 10 }}>{projects[modal].desc}</div>
+              <a href={projects[modal].demo || '#'} target="_blank" rel="noopener noreferrer" style={{ color: '#00eaff', textDecoration: 'underline', fontSize: '1.05rem' }}>
+                {projects[modal].demo ? 'Live Demo' : 'Project Link'}
+              </a>
+            </ModalContent>
+          </ElectricBorder>
         </ModalOverlay>
       )}
     </Section>
