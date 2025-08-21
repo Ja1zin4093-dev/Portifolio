@@ -15,19 +15,28 @@ const ANIMATION_CONFIG = {
   DEVICE_BETA_OFFSET: 20,
 };
 
-const clamp = (value, min = 0, max = 100) => Math.min(Math.max(value, min), max);
+const clamp = (value, min = 0, max = 100) =>
+  Math.min(Math.max(value, min), max);
 
-const round = (value, precision = 3) => parseFloat(value.toFixed(precision));
+const round = (value, precision = 3) =>
+  parseFloat(value.toFixed(precision));
 
-const adjust = (value, fromMin, fromMax, toMin, toMax) =>
+const adjust = (
+  value,
+  fromMin,
+  fromMax,
+  toMin,
+  toMax
+) =>
   round(toMin + ((toMax - toMin) * (value - fromMin)) / (fromMax - fromMin));
 
-const easeInOutCubic = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const easeInOutCubic = (x) =>
+  x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 
 const ProfileCardComponent = ({
   avatarUrl = "<Placeholder for avatar URL>",
   iconUrl = "<Placeholder for icon URL>",
-  grainUrl = "<Placeholder for grain texture URL>",
+  grainUrl = "<Placeholder for grain URL>",
   behindGradient,
   innerGradient,
   showBehindGradient = true,
@@ -52,7 +61,12 @@ const ProfileCardComponent = ({
 
     let rafId = null;
 
-    const updateCardTransform = (offsetX, offsetY, card, wrap) => {
+    const updateCardTransform = (
+      offsetX,
+      offsetY,
+      card,
+      wrap
+    ) => {
       const width = card.clientWidth;
       const height = card.clientHeight;
 
@@ -79,7 +93,13 @@ const ProfileCardComponent = ({
       });
     };
 
-    const createSmoothAnimation = (duration, startX, startY, card, wrap) => {
+    const createSmoothAnimation = (
+      duration,
+      startX,
+      startY,
+      card,
+      wrap
+    ) => {
       const startTime = performance.now();
       const targetX = wrap.clientWidth / 2;
       const targetY = wrap.clientHeight / 2;
@@ -150,10 +170,15 @@ const ProfileCardComponent = ({
 
       if (!card || !wrap || !animationHandlers) return;
 
+      // Harmonize offset calculation: always derive offsets from clientX/clientY + bounding rect
+      const rect = card.getBoundingClientRect();
+      const offX = event.clientX - rect.left;
+      const offY = event.clientY - rect.top;
+
       animationHandlers.createSmoothAnimation(
         ANIMATION_CONFIG.SMOOTH_DURATION,
-        event.offsetX,
-        event.offsetY,
+        offX,
+        offY,
         card,
         wrap
       );
@@ -171,7 +196,9 @@ const ProfileCardComponent = ({
       if (!card || !wrap || !animationHandlers) return;
 
       const { beta, gamma } = event;
-      if (!beta || !gamma) return;
+
+      // IMPORTANT FIX: allow 0 values — check for finite numbers explicitly
+      if (!Number.isFinite(beta) || !Number.isFinite(gamma)) return;
 
       animationHandlers.updateCardTransform(
         card.clientHeight / 2 + gamma * mobileTiltSensitivity,
@@ -198,7 +225,7 @@ const ProfileCardComponent = ({
 
     const handleClick = () => {
       if (!enableMobileTilt || location.protocol !== 'https:') return;
-      if (typeof window.DeviceMotionEvent.requestPermission === 'function') {
+      if (typeof window.DeviceMotionEvent?.requestPermission === 'function') {
         window.DeviceMotionEvent
           .requestPermission()
           .then(state => {
@@ -248,7 +275,8 @@ const ProfileCardComponent = ({
   ]);
 
   const cardStyle = useMemo(
-    () => ({
+    () =>
+    ({
       "--icon": iconUrl ? `url(${iconUrl})` : "none",
       "--grain": grainUrl ? `url(${grainUrl})` : "none",
       "--behind-gradient": showBehindGradient
@@ -267,7 +295,7 @@ const ProfileCardComponent = ({
     <div
       ref={wrapRef}
       className={`pc-card-wrapper ${className}`.trim()}
-      style={{ ...cardStyle, '--card-opacity': '1' }}
+      style={cardStyle}
     >
       <section ref={cardRef} className="pc-card">
         <div className="pc-inside">
