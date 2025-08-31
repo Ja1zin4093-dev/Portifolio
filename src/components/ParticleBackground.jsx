@@ -495,7 +495,7 @@ export default function ParticleBackground(props) {
 
     const maxFrames = 90; // run up to this many frames (safeguard)
     const maxTime = 2500; // or this many ms
-    const thresholdFps = 45; // threshold from user
+    const thresholdFps = 90; // threshold from user
 
     const hasWebGL = (() => {
       try {
