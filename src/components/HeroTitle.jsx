@@ -1,16 +1,34 @@
 import React from 'react';
+import styled from 'styled-components';
 import SplitText from './Split';
+
+const Title = styled.h1`
+  font-family: var(--font-code);
+  color: var(--color-heading);
+  margin-bottom: 0.5rem;
+  text-align: center;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  letter-spacing: -0.01em;
+
+  /* Default fluid size */
+  font-size: clamp(1.7rem, 8.5vw, 3.4rem);
+
+  /* Slightly bigger on small devices */
+  @media (max-width: 480px) {
+    font-size: clamp(1.9rem, 10vw, 3.2rem);
+  }
+
+  @media (max-width: 360px) {
+    font-size: clamp(2rem, 10.8vw, 3.1rem);
+  }
+`;
 
 const HeroTitle = React.memo(() => {
   return (
-    <h1
-      style={{
-        fontSize: '3rem',
-        fontFamily: 'var(--font-code)',
-        color: 'var(--color-heading)',
-        marginBottom: '0.5rem',
-      }}
-    >
+    <Title>
       <SplitText
         text="Oi, Eu sou o João"
         splitType="chars"
@@ -21,8 +39,9 @@ const HeroTitle = React.memo(() => {
         to={{ opacity: 1, y: 0 }}
         threshold={0.1}
         rootMargin="-100px"
+  whiteSpace="nowrap"
       />
-    </h1>
+    </Title>
   );
 });
 

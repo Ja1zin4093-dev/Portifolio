@@ -26,6 +26,7 @@ const SplitText = ({
   threshold = 0.1,
   rootMargin = "-100px",
   textAlign = "center",
+  whiteSpace = "normal",
   onLetterAnimationComplete,
 }) => {
   const ref = useRef(null);
@@ -205,10 +206,11 @@ const SplitText = ({
       className={`split-parent ${className}`}
       style={{
         textAlign,
-        overflow: "hidden",
-        display: "inline-block",
-        whiteSpace: "normal",
-        wordWrap: "break-word",
+  overflow: "hidden",
+  display: "inline-block",
+  whiteSpace,
+  wordWrap: whiteSpace === "nowrap" ? "normal" : "break-word",
+  overflowWrap: whiteSpace === "nowrap" ? "normal" : "break-word",
       }}
     >
       {text}
