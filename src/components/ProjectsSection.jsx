@@ -2,12 +2,19 @@ import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import ElectricBorder from './ElectricBorder'; // novo import (coloque ElectricBorder.jsx + ElectricBorder.css na mesma pasta)
+import { FiSearch, FiTrendingUp, FiHeart } from 'react-icons/fi';
+import { FaProjectDiagram, FaReact } from 'react-icons/fa';
+import { TbTimeline } from 'react-icons/tb';
+import { AiOutlineClockCircle } from 'react-icons/ai';
+import { BiCalculator, BiTransfer } from 'react-icons/bi';
+import { RiRobot2Line } from 'react-icons/ri';
 
 const projects = [
   {
     name: 'Busca Texto',
     tech: ['C#', '.NET Framework'],
-    img: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80',
+  img: '',
+  icon: FiSearch,
     demo: 'https://your-demo-link.com',
     video: '',
     desc: 'Um software de busca de texto feito para fins acadêmicos que possui diversos tipos de busca como KMP, Rabin-Karp e Boyer-Moore.'
@@ -15,7 +22,8 @@ const projects = [
   {
     name: 'Editor de grafos',
     tech: ['C#', '.NET Framework'],
-    img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+  img: '',
+  icon: FaProjectDiagram,
     demo: '',
     video: 'https://www.w3schools.com/html/mov_bbb.mp4',
     desc: 'Um editor de grafos interativo com animações e com algoritmos como Caminho Mínimo , Euleriano, AGM e Profundidade.'
@@ -23,18 +31,74 @@ const projects = [
   {
     name: 'Time line',
     tech: ['HTML', 'CSS','JavaScript'],
-    img: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+  img: '',
+  icon: TbTimeline,
     demo: 'https://time-lineamorosa.netlify.app/',
     video: '',
     desc: 'Uma linha do tempo interativa para visualização de eventos.'
   },
   {
-    name: 'E-commerce Store',
-    tech: ['React', 'Node.js', 'MongoDB'],
-    img: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+    name: 'Maya',
+    tech: ['HTML', 'CSS','JavaScript', 'PHP', 'MySQL'],
+  img: '',
+  icon: FiTrendingUp,
     demo: 'https://your-ecommerce-demo.com',
     video: '',
-    desc: 'An online store platform with user authentication and payment integration.'
+    desc: 'Uma plataforma de gestão financeira com controle de despesas e metas. Desenvolvida para um projeto acadêmico.'
+  },
+  {
+    name: 'Portifolio',
+    tech: ['React', 'tailwindcss','Vite', 'JavaScript','tree.js'],
+  img: '',
+  icon: FaReact,
+    demo: 'https://your-ecommerce-demo.com',
+    video: '',
+    desc: 'Um portfólio pessoal construído com React e Tailwind CSS.'
+  },
+  {
+     name: 'Cartinha',
+    tech: ['HTML', 'CSS', 'JavaScript'],
+  img: '',
+  icon: FiHeart,
+    demo: 'https://your-ecommerce-demo.com',
+    video: '',
+    desc: 'Uma das minhas primeiras experiências com programação web. Um site simples de cartas de amor.'
+  },
+  {
+    name: 'Relogio',
+    tech:  ['React', 'tailwindcss','Vite', 'JavaScript'],
+  img: '',
+  icon: AiOutlineClockCircle,
+    demo: 'https://your-ecommerce-demo.com',
+    video: '',
+    desc: 'Um relógio digital construído com React e Tailwind CSS.'
+  },
+  {
+    name: 'Calculadora de euclides',
+    tech: ['Python'],
+  img: '',
+  icon: BiCalculator,
+    demo: 'https://your-ecommerce-demo.com',
+    video: '',
+    desc: 'Uma calculadora de euclides construída com Python. Com ferramentas de conversor de Bases, Algoritmo de Euclides e Crivo de Eratóstenes. Utilizando a biblioteca Tkinter para a interface gráfica.'
+  },
+  {
+    name: 'Auto-Transfer',
+    tech: ['Python'],
+  img: '',
+  icon: BiTransfer,
+    demo: 'https://your-ecommerce-demo.com',
+    video: '',
+    desc: 'Um projeto pessoal de transferência automática de arquivos construído com Python. Utilizando a biblioteca Tkinter para a interface gráfica e a biblioteca watchdog para monitoramento de diretórios.'
+  },
+  {
+    name: 'Trigger-bot',
+    tech: ['Python'],
+  img: '',
+  icon: RiRobot2Line,
+    demo: 'https://your-ecommerce-demo.com',
+    video: '',
+    desc: 'Uma especie de cheat de disparo automario, desenvolvido em Python visando funcionar para o jogo Valorant.'
   }
 ];
 
@@ -125,6 +189,17 @@ const CardImg = styled.img`
   height: 140px;
   object-fit: cover;
   border-bottom: 2px solid #00eaff44;
+`;
+
+const CardIconMedia = styled.div`
+  width: 100%;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid #00eaff44;
+  background: linear-gradient(135deg, rgba(0,234,255,0.08), rgba(0,122,255,0.06));
+  color: #00eaff;
 `;
 
 const CardContent = styled.div`
@@ -307,7 +382,13 @@ const ProjectsSection = () => {
                 tabIndex={0}
                 aria-label={`Open details for ${proj.name}`}
               >
-                <CardImg src={proj.img} alt={proj.name + ' preview'} />
+                {proj.img ? (
+                  <CardImg src={proj.img} alt={proj.name + ' preview'} />
+                ) : (
+                  <CardIconMedia aria-hidden="true">
+                    {proj.icon ? React.createElement(proj.icon, { size: 64 }) : <FiSearch size={64} />}
+                  </CardIconMedia>
+                )}
                 <CardContent>
                   <div style={{ fontWeight: 600, fontSize: '1.15rem' }}>{proj.name}</div>
                   <div style={{ color: '#b2c7d9', fontSize: '0.98rem', marginTop: 2 }}>{proj.desc}</div>
