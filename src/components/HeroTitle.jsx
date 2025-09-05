@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import SplitText from './Split';
+import { useTranslation } from 'react-i18next';
 
 const Title = styled.h1`
   font-family: var(--font-code);
@@ -27,10 +28,12 @@ const Title = styled.h1`
 `;
 
 const HeroTitle = React.memo(() => {
+  const { t, i18n } = useTranslation();
   return (
     <Title>
       <SplitText
-        text="Oi, Eu sou o João"
+        key={i18n.language}
+        text={t('hero.title')}
         splitType="chars"
         delay={200}
         duration={0.6}

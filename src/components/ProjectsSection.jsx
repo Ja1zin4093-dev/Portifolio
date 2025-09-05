@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import ElectricBorder from './ElectricBorder'; // novo import (coloque ElectricBorder.jsx + ElectricBorder.css na mesma pasta)
+import { useTranslation } from 'react-i18next';
 import { FiSearch, FiTrendingUp, FiHeart } from 'react-icons/fi';
 import { FaProjectDiagram, FaReact } from 'react-icons/fa';
 import { TbTimeline } from 'react-icons/tb';
@@ -11,7 +12,8 @@ import { RiRobot2Line } from 'react-icons/ri';
 
 const projects = [
   {
-    name: 'Busca Texto',
+  key: 'buscaTexto',
+  name: 'Busca Texto',
     tech: ['C#', '.NET Framework'],
   img: '',
   icon: FiSearch,
@@ -20,7 +22,8 @@ const projects = [
     desc: 'Um software de busca de texto feito para fins acadêmicos que possui diversos tipos de busca como KMP, Rabin-Karp e Boyer-Moore.'
   },
   {
-    name: 'Editor de grafos',
+  key: 'editorGrafos',
+  name: 'Editor de grafos',
     tech: ['C#', '.NET Framework'],
   img: '',
   icon: FaProjectDiagram,
@@ -29,7 +32,8 @@ const projects = [
     desc: 'Um editor de grafos interativo com animações e com algoritmos como Caminho Mínimo , Euleriano, AGM e Profundidade.'
   },
   {
-    name: 'Time line',
+  key: 'timeline',
+  name: 'Time line',
     tech: ['HTML', 'CSS','JavaScript'],
   img: '',
   icon: TbTimeline,
@@ -38,7 +42,8 @@ const projects = [
     desc: 'Uma linha do tempo interativa para visualização de eventos.'
   },
   {
-    name: 'Maya',
+  key: 'maya',
+  name: 'Maya',
     tech: ['HTML', 'CSS','JavaScript', 'PHP', 'MySQL'],
   img: '',
   icon: FiTrendingUp,
@@ -47,7 +52,8 @@ const projects = [
     desc: 'Uma plataforma de gestão financeira com controle de despesas e metas. Desenvolvida para um projeto acadêmico.'
   },
   {
-    name: 'Portifolio',
+  key: 'portfolio',
+  name: 'Portifolio',
     tech: ['React', 'tailwindcss','Vite', 'JavaScript','tree.js'],
   img: '',
   icon: FaReact,
@@ -56,7 +62,8 @@ const projects = [
     desc: 'Um portfólio pessoal construído com React e Tailwind CSS.'
   },
   {
-     name: 'Cartinha',
+   key: 'cartinha',
+   name: 'Cartinha',
     tech: ['HTML', 'CSS', 'JavaScript'],
   img: '',
   icon: FiHeart,
@@ -65,7 +72,8 @@ const projects = [
     desc: 'Uma das minhas primeiras experiências com programação web. Um site simples de cartas de amor.'
   },
   {
-    name: 'Relogio',
+  key: 'relogio',
+  name: 'Relogio',
     tech:  ['React', 'tailwindcss','Vite', 'JavaScript'],
   img: '',
   icon: AiOutlineClockCircle,
@@ -74,7 +82,8 @@ const projects = [
     desc: 'Um relógio digital construído com React e Tailwind CSS.'
   },
   {
-    name: 'Calculadora de euclides',
+  key: 'calcEuclides',
+  name: 'Calculadora de euclides',
     tech: ['Python'],
   img: '',
   icon: BiCalculator,
@@ -83,7 +92,8 @@ const projects = [
     desc: 'Uma calculadora de euclides construída com Python. Com ferramentas de conversor de Bases, Algoritmo de Euclides e Crivo de Eratóstenes. Utilizando a biblioteca Tkinter para a interface gráfica.'
   },
   {
-    name: 'Auto-Transfer',
+  key: 'autoTransfer',
+  name: 'Auto-Transfer',
     tech: ['Python'],
   img: '',
   icon: BiTransfer,
@@ -92,7 +102,8 @@ const projects = [
     desc: 'Um projeto pessoal de transferência automática de arquivos construído com Python. Utilizando a biblioteca Tkinter para a interface gráfica e a biblioteca watchdog para monitoramento de diretórios.'
   },
   {
-    name: 'Trigger-bot',
+  key: 'triggerBot',
+  name: 'Trigger-bot',
     tech: ['Python'],
   img: '',
   icon: RiRobot2Line,
@@ -272,6 +283,7 @@ const MediaWrapper = styled.div`
 
 const ProjectsSection = () => {
   const [modal, setModal] = useState(null);
+  const { t } = useTranslation();
 
   const total = projects.length;
   const [itemsPerViewState, setItemsPerViewState] = useState(typeof window !== 'undefined' && window.innerWidth <= 900 ? 1 : 3);
@@ -341,7 +353,7 @@ const ProjectsSection = () => {
 
   return (
     <Section id="projects">
-      <h2 style={{ fontFamily: 'Fira Code, monospace', fontWeight: 700, fontSize: '2.1rem', letterSpacing: 1 }}>Projects</h2>
+  <h2 style={{ fontFamily: 'Fira Code, monospace', fontWeight: 700, fontSize: '2.1rem', letterSpacing: 1 }}>{t('projects.title')}</h2>
       <CarouselWrapper ref={wrapperRef} tabIndex={0}>
         <CarouselViewport ref={viewportRef}>
           <CarouselTrack
@@ -390,8 +402,12 @@ const ProjectsSection = () => {
                   </CardIconMedia>
                 )}
                 <CardContent>
-                  <div style={{ fontWeight: 600, fontSize: '1.15rem' }}>{proj.name}</div>
-                  <div style={{ color: '#b2c7d9', fontSize: '0.98rem', marginTop: 2 }}>{proj.desc}</div>
+                  <div style={{ fontWeight: 600, fontSize: '1.15rem' }}>
+                    {t(`projects.items.${proj.key}.name`)}
+                  </div>
+                  <div style={{ color: '#b2c7d9', fontSize: '0.98rem', marginTop: 2 }}>
+                    {t(`projects.items.${proj.key}.desc`)}
+                  </div>
                   <TechList>
                     {proj.tech.map(t => <Tech key={t}>{t}</Tech>)}
                   </TechList>
@@ -427,7 +443,9 @@ const ProjectsSection = () => {
               onClick={e => e.stopPropagation()}
             >
               <CloseBtn onClick={() => setModal(null)} aria-label="Close project modal">×</CloseBtn>
-              <div style={{ fontWeight: 700, fontSize: '1.3rem', marginBottom: 8 }}>{projects[modal].name}</div>
+              <div style={{ fontWeight: 700, fontSize: '1.3rem', marginBottom: 8 }}>
+                {t(`projects.items.${projects[modal].key}.name`)}
+              </div>
               <TechList style={{ marginBottom: 10 }}>
                 {projects[modal].tech.map(t => <Tech key={t}>{t}</Tech>)}
               </TechList>
@@ -443,7 +461,9 @@ const ProjectsSection = () => {
                   />
                 )}
               </MediaWrapper>
-              <div style={{ color: '#b2c7d9', fontSize: '1.01rem', marginBottom: 10 }}>{projects[modal].desc}</div>
+              <div style={{ color: '#b2c7d9', fontSize: '1.01rem', marginBottom: 10 }}>
+                {t(`projects.items.${projects[modal].key}.desc`)}
+              </div>
               <a href={projects[modal].demo || '#'} target="_blank" rel="noopener noreferrer" style={{ color: '#00eaff', textDecoration: 'underline', fontSize: '1.05rem' }}>
                 {projects[modal].demo ? 'Live Demo' : 'Project Link'}
               </a>
