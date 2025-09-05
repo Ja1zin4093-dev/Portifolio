@@ -164,10 +164,30 @@ const ASPNetIcon = (
   </svg>
 );
 
+// New: Vue and Rust icons
+const VueIcon = (
+  <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden>
+    <rect width="32" height="32" rx="6" fill="#23273a"/>
+    <path d="M8 10h4l4 7 4-7h4L16 24 8 10z" fill="#41B883"/>
+    <path d="M12 10h3.2L16 12l0.8-2H20l-4 7-4-7z" fill="#35495E"/>
+  </svg>
+);
+
+const RustIcon = (
+  <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden>
+    <rect width="32" height="32" rx="6" fill="#23273a"/>
+    <circle cx="16" cy="16" r="8" fill="#000" stroke="#D17C2E" strokeWidth="1.5"/>
+    <circle cx="16" cy="16" r="3.2" fill="#D17C2E"/>
+    <path d="M10 16h12" stroke="#D17C2E" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M12 13h8M12 19h8" stroke="#D17C2E" strokeWidth="1.3" strokeLinecap="round"/>
+  </svg>
+);
+
 // --- Skills array with correct icons ---
 const skills = [
   { icon: JavaScriptIcon, name: 'JavaScript', level: 90 },
   { icon: ReactIcon, name: 'React', level: 85 },
+  { icon: VueIcon, name: 'Vue', level: 81 },
   { icon: NodeIcon, name: 'Node.js', level: 80 },
   { icon: TypeScriptIcon, name: 'TypeScript', level: 75 },
   { icon: CSharpIcon, name: 'C#', level: 87 },
@@ -184,6 +204,7 @@ const skills = [
   { icon: AssemblyIcon, name: 'Assembly', level: 47 },
   { icon: DotNetIcon, name: '.NET Framework', level: 91 },
   { icon: ASPNetIcon, name: 'ASP.NET', level: 50 },
+  { icon: RustIcon, name: 'Rust', level: 62 },
 ];
 
 // --- Styled Components (unchanged) ---
