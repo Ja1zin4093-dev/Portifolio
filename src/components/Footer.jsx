@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 const FooterContainer = styled.footer` 
   background: #10131A;
@@ -71,6 +72,7 @@ const Copyright = styled.div`
 `;
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <FooterContainer>
       <ContactInfo>
@@ -105,9 +107,9 @@ const Footer = () => {
         </SocialIcon>
       </SocialLinks>
       <Copyright>
-        <p>Made with ❤️ by João Gabriel Rocha Rosa</p>
-        <p>© {new Date().getFullYear()} João Gabriel Rocha Rosa</p>
-        <p><a href="/privacy-policy" style={{ color: '#00EAFF' }}>Privacy Policy</a></p>
+        <p>{t('footer.made')}</p>
+        
+        
       </Copyright>
     </FooterContainer>
   );

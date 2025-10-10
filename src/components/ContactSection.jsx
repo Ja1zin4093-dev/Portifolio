@@ -7,6 +7,7 @@ import { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_USER_ID } from '../ema
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled, { css, keyframes } from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const Section = styled.section`
   background: none;
@@ -270,6 +271,7 @@ const ErrorMessage = styled(motion.div)`
 `;
 
 const ContactSection = ({ asModal = false, onClose }) => {
+  const { t } = useTranslation();
   const [fields, setFields] = useState({ name: '', email: '', message: '' });
   const [focus, setFocus] = useState({ name: false, email: false, message: false });
   const [sent, setSent] = useState(false);
@@ -318,10 +320,10 @@ const ContactSection = ({ asModal = false, onClose }) => {
   // Client-side validation for required fields and email format
   const validate = () => {
     const errs = {};
-    if (!fields.name.trim()) errs.name = 'Name is required.';
-    if (!fields.email.trim()) errs.email = 'Email is required.';
-    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(fields.email)) errs.email = 'Invalid email.';
-    if (!fields.message.trim()) errs.message = 'Message is required.';
+    if (!fields.name.trim()) errs.name = t('contact.validation.nameRequired');
+    if (!fields.email.trim()) errs.email = t('contact.validation.emailRequired');
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(fields.email)) errs.email = t('contact.validation.emailInvalid');
+    if (!fields.message.trim()) errs.message = t('contact.validation.messageRequired');
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -371,7 +373,7 @@ const ContactSection = ({ asModal = false, onClose }) => {
           strokeLinecap="round"
         />
       </svg>
-      <span style={{ color: '#eaf6fb', fontWeight: 600, fontSize: '1.08rem' }}>Mensagem enviada com sucesso!</span>
+      <span style={{ color: '#eaf6fb', fontWeight: 600, fontSize: '1.08rem' }}>{t('contact.success.toast')}</span>
     </div>
   );
 
@@ -383,7 +385,7 @@ const ContactSection = ({ asModal = false, onClose }) => {
       transition={{ duration: 0.5 }}
       style={{ color: '#ff4d4f', fontWeight: 600, fontSize: '1.08rem' }}
     >
-      Falha ao enviar. Tente novamente.
+      {t('contact.error.toast')}
     </motion.div>
   );
 
@@ -528,7 +530,7 @@ const ContactSection = ({ asModal = false, onClose }) => {
         animate={{ opacity: [0.5, 0.8, 0.5] }}
         transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse' }}
       />
-      <h2 style={{ fontFamily: 'Fira Code, monospace', fontWeight: 700, fontSize: '2.1rem', letterSpacing: 1, textAlign: 'center', marginBottom: 8 }}>Contact</h2>
+      <h2 style={{ fontFamily: 'Fira Code, monospace', fontWeight: 700, fontSize: '2.1rem', letterSpacing: 1, textAlign: 'center', marginBottom: 8 }}>{t('contact.title')}</h2>
       <AnimatePresence>
         {sent ? (
           <SuccessCard
@@ -554,17 +556,17 @@ const ContactSection = ({ asModal = false, onClose }) => {
                 strokeLinecap="round"
               />
             </Checkmark>
-            <SuccessMsg>Mensagem enviada com sucesso!</SuccessMsg>
+            <SuccessMsg>{t('contact.success.toast')}</SuccessMsg>
             <ResetButton
               type="button"
               onClick={handleReset}
               whileHover={{ scale: 1.07 }}
               whileTap={{ scale: 0.97 }}
-              aria-label="Enviar outra mensagem"
-            >Enviar outra mensagem</ResetButton>
+              aria-label={t('contact.success.button')}
+            >{t('contact.success.button')}</ResetButton>
           </SuccessCard>
         ) : (
-          <Form onSubmit={handleSubmit} aria-label="Contact form" noValidate>
+          <Form onSubmit={handleSubmit} aria-label={t('contact.aria.form')} noValidate>
             <FieldWrap
               whileFocus={{ scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 320, damping: 18 }}
@@ -579,7 +581,7 @@ const ContactSection = ({ asModal = false, onClose }) => {
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 required
-                aria-label="Your name"
+                aria-label={t('contact.aria.name')}
                 aria-required="true"
                 aria-invalid={!!errors.name}
                 aria-describedby={errors.name ? 'name-error' : undefined}
@@ -590,9 +592,10 @@ const ContactSection = ({ asModal = false, onClose }) => {
                 initial={{ color: '#b2c7d9' }}
                 animate={{ color: (focus.name || fields.name) ? '#03eaffff' : '#b2c7d9' }}
                 transition={{ duration: 0.3 }}
-              >Name</Label>
+              >{t('contact.labels.name')}</Label>
               {errors.name && (
                 <ErrorMessage
+                  id="name-error"
                   key="name"
                   initial={{ y: -5, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -616,7 +619,7 @@ const ContactSection = ({ asModal = false, onClose }) => {
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 required
-                aria-label="Your email"
+                aria-label={t('contact.aria.email')}
                 aria-required="true"
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? 'email-error' : undefined}
@@ -627,9 +630,10 @@ const ContactSection = ({ asModal = false, onClose }) => {
                 initial={{ color: '#b2c7d9' }}
                 animate={{ color: (focus.email || fields.email) ? '#0893a0ff' : '#b2c7d9' }}
                 transition={{ duration: 0.3 }}
-              >Email</Label>
+              >{t('contact.labels.email')}</Label>
               {errors.email && (
                 <ErrorMessage
+                  id="email-error"
                   key="email"
                   initial={{ y: -5, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -651,7 +655,7 @@ const ContactSection = ({ asModal = false, onClose }) => {
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 required
-                aria-label="Your message"
+                aria-label={t('contact.aria.message')}
                 aria-required="true"
                 aria-invalid={!!errors.message}
                 aria-describedby={errors.message ? 'message-error' : undefined}
@@ -662,9 +666,10 @@ const ContactSection = ({ asModal = false, onClose }) => {
                 initial={{ color: '#b2c7d9' }}
                 animate={{ color: (focus.message || fields.message) ? '#00eaff' : '#b2c7d9' }}
                 transition={{ duration: 0.3 }}
-              >Message</Label>
+              >{t('contact.labels.message')}</Label>
               {errors.message && (
                 <ErrorMessage
+                  id="message-error"
                   key="message"
                   initial={{ y: -5, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -679,7 +684,7 @@ const ContactSection = ({ asModal = false, onClose }) => {
               whileHover={{ scale: 1.1 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               whileTap={{ scale: 0.95, rotate: 2 }}
-              aria-label="Send message"
+              aria-label={t('contact.aria.send')}
               disabled={sending}
               style={{ opacity: sending ? 0.6 : 1 }}
               onMouseDown={handleButtonClick}
@@ -695,7 +700,7 @@ const ContactSection = ({ asModal = false, onClose }) => {
                 <path d="M2 4l10 8 10-8" fill="none" stroke="#ffffff" strokeWidth="2" />
                 <path d="M2 4l10 8 10-8" fill="none" stroke="#ffcc00" strokeWidth="1" strokeDasharray="4" />
               </Icon>
-              Enviar agora
+              {t('contact.submit')}
               <AnimatePresence>
                 {rippleActive && (
                   <Ripple

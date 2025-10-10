@@ -165,7 +165,7 @@ const AboutSection = () => {
       <ProfileTimelineContainer>
         <ProfileCard
           name="João R. Rosa"
-          title="Software Engineer"
+          title="Student"
           handle="jg_rocha23"
           status="Online"
           contactText="Contact Me"
@@ -173,7 +173,10 @@ const AboutSection = () => {
           showUserInfo={true}
           enableTilt={true}
           enableMobileTilt={false}
-          onContactClick={() => console.log('Contact clicked')}
+          onContactClick={() => {
+            const el = document.getElementById('contact');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}
         />
         <Timeline>
           {milestones.slice(0, showFullTimeline ? milestones.length : 3).map((item, i) => (

@@ -288,7 +288,16 @@ const ProfileCardComponent = ({
   );
 
   const handleContactClick = useCallback(() => {
-    onContactClick?.();
+    if (onContactClick) {
+      onContactClick();
+      return;
+    }
+    const el = document.getElementById('contact');
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (typeof window !== 'undefined') {
+      window.location.hash = '#contact';
+    }
   }, [onContactClick]);
 
   return (
