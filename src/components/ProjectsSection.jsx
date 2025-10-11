@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import ElectricBorder from './ElectricBorder'; // novo import (coloque ElectricBorder.jsx + ElectricBorder.css na mesma pasta)
 import { useTranslation } from 'react-i18next';
 import { FiSearch, FiTrendingUp, FiHeart } from 'react-icons/fi';
 import { FaProjectDiagram, FaReact } from 'react-icons/fa';
@@ -17,7 +16,8 @@ const projects = [
     tech: ['C#', '.NET Framework'],
   img: '',
   icon: FiSearch,
-    demo: 'https://your-demo-link.com',
+    github: 'https://github.com/Ja1zin4093-dev/BuscaTexto',
+    demo: '',
     video: '',
     desc: 'Um software de busca de texto feito para fins acadêmicos que possui diversos tipos de busca como KMP, Rabin-Karp e Boyer-Moore.'
   },
@@ -27,6 +27,7 @@ const projects = [
     tech: ['C#', '.NET Framework'],
   img: '',
   icon: FaProjectDiagram,
+    github: 'https://github.com/Ja1zin4093-dev/Editor-de-Grafos-2025.1--C--',
     demo: '',
     video: 'https://www.w3schools.com/html/mov_bbb.mp4',
     desc: 'Um editor de grafos interativo com animações e com algoritmos como Caminho Mínimo , Euleriano, AGM e Profundidade.'
@@ -37,6 +38,7 @@ const projects = [
     tech: ['HTML', 'CSS','JavaScript'],
   img: '',
   icon: TbTimeline,
+    github: 'https://github.com/Ja1zin4093-dev/Memorias',
     demo: 'https://time-lineamorosa.netlify.app/',
     video: '',
     desc: 'Uma linha do tempo interativa para visualização de eventos.'
@@ -47,7 +49,8 @@ const projects = [
     tech: ['HTML', 'CSS','JavaScript', 'PHP', 'MySQL'],
   img: '',
   icon: FiTrendingUp,
-    demo: 'https://your-ecommerce-demo.com',
+    github: 'https://github.com/Ja1zin4093-dev/Pit',
+    demo: '',
     video: '',
     desc: 'Uma plataforma de gestão financeira com controle de despesas e metas. Desenvolvida para um projeto acadêmico.'
   },
@@ -57,7 +60,8 @@ const projects = [
     tech: ['React', 'tailwindcss','Vite', 'JavaScript','tree.js'],
   img: '',
   icon: FaReact,
-    demo: 'https://your-ecommerce-demo.com',
+    github: 'https://github.com/Ja1zin4093-dev/Portifolio',
+    demo: '',
     video: '',
     desc: 'Um portfólio pessoal construído com React e Tailwind CSS.'
   },
@@ -67,7 +71,8 @@ const projects = [
     tech: ['HTML', 'CSS', 'JavaScript'],
   img: '',
   icon: FiHeart,
-    demo: 'https://your-ecommerce-demo.com',
+    github: 'https://github.com/Ja1zin4093-dev/Presente',
+    demo: '',
     video: '',
     desc: 'Uma das minhas primeiras experiências com programação web. Um site simples de cartas de amor.'
   },
@@ -77,7 +82,8 @@ const projects = [
     tech:  ['React', 'tailwindcss','Vite', 'JavaScript'],
   img: '',
   icon: AiOutlineClockCircle,
-    demo: 'https://your-ecommerce-demo.com',
+    github: 'https://github.com/Ja1zin4093-dev/Relogio',
+    demo: '',
     video: '',
     desc: 'Um relógio digital construído com React e Tailwind CSS.'
   },
@@ -87,7 +93,8 @@ const projects = [
     tech: ['Python'],
   img: '',
   icon: BiCalculator,
-    demo: 'https://your-ecommerce-demo.com',
+    github: 'https://github.com/Ja1zin4093-dev/Trabalho-de-md',
+    demo: '',
     video: '',
     desc: 'Uma calculadora de euclides construída com Python. Com ferramentas de conversor de Bases, Algoritmo de Euclides e Crivo de Eratóstenes. Utilizando a biblioteca Tkinter para a interface gráfica.'
   },
@@ -97,7 +104,8 @@ const projects = [
     tech: ['Python'],
   img: '',
   icon: BiTransfer,
-    demo: 'https://your-ecommerce-demo.com',
+    github: 'https://github.com/Ja1zin4093-dev/Transfer',
+    demo: '',
     video: '',
     desc: 'Um projeto pessoal de transferência automática de arquivos construído com Python. Utilizando a biblioteca Tkinter para a interface gráfica e a biblioteca watchdog para monitoramento de diretórios.'
   },
@@ -107,7 +115,8 @@ const projects = [
     tech: ['Python'],
   img: '',
   icon: RiRobot2Line,
-    demo: 'https://your-ecommerce-demo.com',
+    github: 'https://github.com/Ja1zin4093-dev/Trigger',
+    demo: '',
     video: '',
     desc: 'Uma especie de cheat de disparo automario, desenvolvido em Python visando funcionar para o jogo Valorant.'
   }
@@ -236,53 +245,9 @@ const Tech = styled.span`
   font-family: 'Fira Code', monospace;
 `;
 
-const ModalOverlay = styled(motion.div)`
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(10, 13, 19, 0.92);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ModalContent = styled(motion.div)`
-  background: #181c2a;
-  border-radius: 18px;
-  box-shadow: 0 8px 48px #00eaff55;
-  padding: 32px 24px;
-  max-width: 540px;
-  width: 96vw;
-  color: #eaf6fb;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-`;
-
-const CloseBtn = styled.button`
-  position: absolute;
-  top: 18px;
-  right: 24px;
-  background: none;
-  border: none;
-  color: #00eaff;
-  font-size: 2rem;
-  cursor: pointer;
-  z-index: 10;
-`;
-
-const MediaWrapper = styled.div`
-  width: 100%;
-  height: auto;
-  iframe, video {
-    width: 100%;
-    height: auto;
-  }
-`;
+// Modal-related styled components removed (we'll open links directly)
 
 const ProjectsSection = () => {
-  const [modal, setModal] = useState(null);
   const { t } = useTranslation();
 
   const total = projects.length;
@@ -319,8 +284,9 @@ const ProjectsSection = () => {
       else if (e.key === 'ArrowRight') next();
       else if (e.key === 'Enter') {
         const active = document.activeElement;
-        if (active && active.getAttribute && active.getAttribute('aria-label')?.startsWith('Open details')) {
-          active.click();
+        const url = active?.getAttribute?.('data-url');
+        if (url && url !== '#') {
+          window.open(url, '_blank', 'noopener,noreferrer');
         }
       }
     };
@@ -350,6 +316,8 @@ const ProjectsSection = () => {
   }, [index, total]);
 
   const viewportRef = React.useRef(null);
+
+  const getProjectUrl = (proj) => proj.github || proj.demo || '#';
 
   return (
     <Section id="projects">
@@ -388,11 +356,15 @@ const ProjectsSection = () => {
                 transition={{ type: 'spring', stiffness: 200 }}
                 onClick={(e) => {
                   if (isDraggingRef.current) { e.preventDefault(); e.stopPropagation(); return; }
-                  setModal(i % total);
+                  const url = getProjectUrl(proj);
+                  if (url && url !== '#') {
+                    window.open(url, '_blank', 'noopener,noreferrer');
+                  }
                 }}
                 style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
                 tabIndex={0}
-                aria-label={`Open details for ${proj.name}`}
+                aria-label={`Open project link for ${proj.name}`}
+                data-url={getProjectUrl(proj)}
               >
                 {proj.img ? (
                   <CardImg src={proj.img} alt={proj.name + ' preview'} />
@@ -417,60 +389,6 @@ const ProjectsSection = () => {
           </CarouselTrack>
         </CarouselViewport>
       </CarouselWrapper>
-
-      {modal !== null && (
-        <ModalOverlay
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => setModal(null)}
-          aria-modal="true"
-          role="dialog"
-        >
-          {/* Aqui envolvemos o ModalContent com ElectricBorder */}
-          <ElectricBorder
-  color="#7df9ff"
-  speed={1}
-  chaos={0.5}
-  thickness={2}
-  style={{ borderRadius: 18 }} // apenas radius; o ModalContent controla largura
->
-
-            <ModalContent
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              onClick={e => e.stopPropagation()}
-            >
-              <CloseBtn onClick={() => setModal(null)} aria-label="Close project modal">×</CloseBtn>
-              <div style={{ fontWeight: 700, fontSize: '1.3rem', marginBottom: 8 }}>
-                {t(`projects.items.${projects[modal].key}.name`)}
-              </div>
-              <TechList style={{ marginBottom: 10 }}>
-                {projects[modal].tech.map(t => <Tech key={t}>{t}</Tech>)}
-              </TechList>
-              <MediaWrapper>
-                {projects[modal].video ? (
-                  <video src={projects[modal].video} autoPlay loop muted style={{ borderRadius: 12, marginBottom: 12 }} />
-                ) : (
-                  <iframe
-                    src={projects[modal].demo}
-                    title={projects[modal].name + ' demo'}
-                    style={{ height: 220, border: 'none', borderRadius: 12, marginBottom: 12 }}
-                    allow="autoplay; fullscreen"
-                  />
-                )}
-              </MediaWrapper>
-              <div style={{ color: '#b2c7d9', fontSize: '1.01rem', marginBottom: 10 }}>
-                {t(`projects.items.${projects[modal].key}.desc`)}
-              </div>
-              <a href={projects[modal].demo || '#'} target="_blank" rel="noopener noreferrer" style={{ color: '#00eaff', textDecoration: 'underline', fontSize: '1.05rem' }}>
-                {projects[modal].demo ? 'Live Demo' : 'Project Link'}
-              </a>
-            </ModalContent>
-          </ElectricBorder>
-        </ModalOverlay>
-      )}
     </Section>
   );
 };
