@@ -256,45 +256,7 @@ const SkillLabel = styled.div`
   align-items: center;
   gap: 10px;
 `;
-
-const BarContainer = styled.div`
-  width: 100%;
-  background: #23273a;
-  border-radius: 8px;
-  overflow: visible;
-  height: 18px;
-  margin: 8px 0 0 0;
-  position: relative;
-  z-index: 2;
-  @media (max-width: 400px) {
-    min-width: 100px;
-  }
-`;
-
-const BarFillComponent = ({ level, index }) => (
-  <motion.div
-    style={{
-      height: '100%',
-      background: 'linear-gradient(90deg, #2E4A46 0%, #66FCF1 100%)',
-      borderRadius: '8px 0 0 8px',
-      boxShadow: '0 0 12px #66FCF1aa, 0 0 8px #2E4A4688',
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      zIndex: 2,
-    }}
-    initial={{ width: '0%' }}
-    animate={{ width: `${level}%` }}
-    transition={{ delay: index * 0.06, duration: 0.8, ease: 'easeInOut' }}
-  />
-);
-
-const SkillLevel = styled.span`
-  color: #00eaff;
-  font-size: 1.01rem;
-  margin-left: 8px;
-`;
-
+ 
 const ShowMoreButton = styled(motion.button)`
   margin: 16px auto;
   padding: 12px 24px;
@@ -322,7 +284,7 @@ const variants = {
   hidden: { opacity: 0, y: 20 },
 };
 
-const SkillItem = ({ icon, name, level, index }) => {
+const SkillItem = ({ icon, name, index }) => {
   const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });
   useEffect(() => {
     if (inView) console.log('Entering', name);
@@ -336,7 +298,7 @@ const SkillItem = ({ icon, name, level, index }) => {
       animate={inView ? 'visible' : 'hidden'}
       whileHover={{ scale: 1.05 }}
       tabIndex={0}
-      aria-label={`${name}: ${level}% de proficiência`}
+      aria-label={`${name} — proficiência`}
       onMouseEnter={() => console.log('Hovering on', name)}
       style={{ zIndex: 2 }}
     >
@@ -349,11 +311,7 @@ const SkillItem = ({ icon, name, level, index }) => {
           {icon}
         </motion.div>
         {name}
-        <SkillLevel>{level}%</SkillLevel>
       </SkillLabel>
-      <BarContainer aria-label={`${name}: ${level}% de proficiência`}>
-        <BarFillComponent level={level} index={index} />
-      </BarContainer>
     </SkillItemWrap>
   );
 };
@@ -374,7 +332,6 @@ export default function SkillsToolsSection({ skills: skillsProp }) {
             key={skill.name}
             icon={skill.icon}
             name={skill.name}
-            level={skill.level}
             index={index}
           />
         ))}
